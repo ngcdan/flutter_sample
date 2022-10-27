@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'strings.dart' as strings;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(const GHFlutterApp());
 
@@ -26,6 +28,32 @@ class GHFlutter extends StatefulWidget {
 
 // the underscore mean this class is file-private, can't be imported into other files
 class _GHFlutterState extends State<GHFlutter> {
+  // dynamic keyword tells that the list could hold anything
+  var _members = <dynamic>[];
+  final _biggerFont = const TextStyle(fontSize: 18.0);
+
+  Future<void> _loadData() async {
+    //const dataUrl = 'https://api.github.com/orgs/raywenderlich/members';
+    //final response = await http.get(Uri.parse(dataUrl));
+
+    // calling setState to rebuild UI
+    setState(() {
+      //_members = json.decode(response.body) as List;
+      _members = ['dan', 'nhat'];
+    });
+  }
+
+  // method call loadData when state is first created
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Widget _buildRow(int i) {
+    print(_members);
+    return ListTile(title: Text('${_members[i]}', style: _biggerFont));
+  }
 
   // primary place where construct widgets.
   @override
@@ -35,7 +63,12 @@ class _GHFlutterState extends State<GHFlutter> {
       appBar: AppBar(
         title: const Text(strings.appTitle),
       ),
-      body: const Text(strings.appTitle),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _members.length,
+        itemBuilder: (BuildContext ctx, int pos) {
+         return _buildRow(pos);
+        }),
     );
   }
 }
